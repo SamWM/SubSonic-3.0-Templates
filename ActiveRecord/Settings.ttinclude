@@ -34,7 +34,7 @@
     };
 
     string CleanUpColumnName(string tableName){
-	    string res = tableName.Replace(" ","_");
+        string res = tableName.Replace(" ","_").Replace("-","_");
         char[] ca = res.ToLower().ToCharArray();
         for (int i = 0; i < ca.Length; i++) {
             if ((i == 0) || (ca[i - 1] == '_')) {
@@ -48,7 +48,7 @@
     
     string CleanUpTableName(string tableName)
     {
-        string res = tableName.Replace(" ","_");
+        string res = tableName.Replace(" ","_").Replace("-","_");
         char[] ca = res.ToLower().ToCharArray();
         for (int i = 0; i < ca.Length; i++) {
             if ((i == 0) || (ca[i - 1] == '_')) {
