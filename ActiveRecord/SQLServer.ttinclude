@@ -76,7 +76,7 @@ List<SPParam> GetSPParams(string spName){
 			p.SysType=GetSysType(row["DATA_TYPE"].ToString());
 			p.DbType=GetDbType(row["DATA_TYPE"].ToString()).ToString();
 			p.Name=row["PARAMETER_NAME"].ToString().Replace("@","");
-			p.CleanName=CleanUp(p.Name);
+			p.CleanName=CleanUpColumnName(p.Name);
 			result.Add(p);
 		}
 		
@@ -104,7 +104,7 @@ List<SP> GetSPs(){
 	    
         if(spType=="PROCEDURE" &! sp.Name.StartsWith("sp_")){
             
-    	    sp.CleanName=CleanUp(sp.Name);
+    	    sp.CleanName=CleanUpTableName(sp.Name);
             
             sp.Parameters=GetSPParams(sp.Name);
             result.Add(sp);        
@@ -126,7 +126,7 @@ List<Table> LoadTables(){
             tbl.Schema=rdr["TABLE_SCHEMA"].ToString();
             tbl.Columns=LoadColumns(tbl);
             tbl.PrimaryKey=GetPK(tbl.Name);
-            tbl.CleanName=CleanUp(tbl.Name);
+            tbl.CleanName=CleanUpTableName(tbl.Name);
             tbl.ClassName=Inflector.MakeSingular(tbl.CleanName);
             tbl.QueryableName=Inflector.MakePlural(tbl.ClassName);
             
@@ -161,7 +161,7 @@ List<Column> LoadColumns(Table tbl){
         while(rdr.Read()){
             Column col=new Column();
             col.Name=rdr["ColumnName"].ToString();
-            col.CleanName=CleanUp(col.Name);
+            col.CleanName=CleanUpColumnName(col.Name);
             col.DataType=rdr["DataType"].ToString();
             col.SysType=GetSysType(col.DataType);
             col.DbType=GetDbType(col.DataType);
@@ -204,7 +204,7 @@ List<FKTable> LoadFKTables(string tableName){
           
             }
             
-            fk.OtherClass=Inflector.MakeSingular(CleanUp(fk.OtherTable));
+            fk.OtherClass=Inflector.MakeSingular(CleanUpTableName(fk.OtherTable));
             fk.OtherQueryable=Inflector.MakePlural(fk.OtherClass);
             
             result.Add(fk);
