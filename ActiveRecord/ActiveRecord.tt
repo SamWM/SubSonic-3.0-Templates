@@ -47,10 +47,7 @@ namespace <#=Namespace #>
         }
         public static void Setup(List<<#=tbl.ClassName#>> testlist){
             SetTestRepo();
-            foreach (var item in testlist)
-            {
-                _testRepo._items.Add(item);
-            }
+            _testRepo._items = testlist;
         }
         public static void Setup(<#=tbl.ClassName#> item) {
             SetTestRepo();
@@ -357,30 +354,33 @@ namespace <#=Namespace #>
         public <#=col.SysType #><#=CheckNullable(col)#> <#=col.CleanName #>
         {
             get { return _<#=col.CleanName #>; }
-            set
+            <#=(col.IsComputed?"protected ":"")#>set
             {
                 if(_<#=col.CleanName #>!=value){
                     _<#=col.CleanName #>=value;
-                    var col=tbl.Columns.SingleOrDefault(x=>x.Name=="<#=col.Name #>");
-                    if(col!=null){
-                        if(!_dirtyColumns.Any(x=>x.Name==col.Name) && _isLoaded){
-                            _dirtyColumns.Add(col);
-                        }
-                    }
-                    OnChanged();
+					ColumnChanged("<#=col.Name #>");
                 }
             }
-        }
+        }	
 
 <#
             }
 #>
 
+		private void ColumnChanged(string columnName) {
+			var col=tbl.Columns.SingleOrDefault(x=>x.Name==columnName);
+			if(col!=null){
+				if(!_dirtyColumns.Any(x=>x.Name==col.Name) && _isLoaded){
+					_dirtyColumns.Add(col);
+				}
+			}
+			OnChanged();
+		}
 
         public DbCommand GetUpdateCommand() {
 <#if(tbl.Columns.Any(x=>x.Name.ToLower()=="modifiedon")){#>
             if (!_dirtyColumns.Any(x => x.Name.ToLower() == "modifiedon")) {
-               this.<#=tbl.Columns.Single(x=>x.Name.ToLower()=="modifiedon").CleanName#>=<#=DatabaseName#>DB.DateTimeNowTruncatedDownToSecond();
+               this.<#=tbl.Columns.Single(x=>x.Name.ToLower()=="modifiedon").CleanName#>=DateTime.Now;
             }            
 <#}#>
             if(TestMode)
@@ -416,7 +416,7 @@ namespace <#=Namespace #>
                 this.ModifiedBy=Environment.UserName;
 <#}#>
 <#if(tbl.Columns.Any(x=>x.Name=="ModifiedOn")){#>
-            this.ModifiedOn=<#=DatabaseName#>DB.DateTimeNowTruncatedDownToSecond();
+            this.ModifiedOn=DateTime.Now;
 <#}#>
             
             if(this._dirtyColumns.Count>0)
@@ -447,14 +447,14 @@ namespace <#=Namespace #>
 
 <#if(tbl.Columns.Any(x=>x.Name=="CreatedOn")){#>
             
-            this.CreatedOn=<#=DatabaseName#>DB.DateTimeNowTruncatedDownToSecond();
+            this.CreatedOn=DateTime.Now;
 <#}#>
 <#if(tbl.Columns.Any(x=>x.Name=="CreatedBy")){#>
             if(String.IsNullOrEmpty(this.CreatedBy))
                 this.CreatedBy=Environment.UserName;
 <#}#>
 <#if(tbl.Columns.Any(x=>x.Name=="ModifiedOn")){#>
-            this.ModifiedOn=<#=DatabaseName#>DB.DateTimeNowTruncatedDownToSecond();
+            this.ModifiedOn=DateTime.Now;
 <#}#>
 <#if(tbl.Columns.Any(x=>x.Name=="ModifiedBy")){#>
             if(String.IsNullOrEmpty(this.ModifiedBy))
