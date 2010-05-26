@@ -18,12 +18,14 @@
 
 <#+
 
-    const string Namespace = "NELForum";
-    const string ConnectionStringName = "NELForum";
+    const string Namespace = "SouthWind";
+    const string ConnectionStringName = "Northwind";
     
     //This is the name of your database and is used in naming
     //the repository. By default we set it to the connection string name
-    const string DatabaseName = "NELForum";
+    const string DatabaseName = "Northwind";
+
+	const bool TreatTinyint1AsBool = false;
 
     //this is a list of tables you don't want generated
     string[] ExcludeTables = new string[]{
@@ -31,15 +33,32 @@
     "BuildVersion",
     };
 
-    string CleanUp(string tableName){
-	    string result=tableName;
-    	
-	    //strip blanks
-	    result=result.Replace(" ","");
-    	
-	    //put your logic here...
-    	
-	    return result;
+    string CleanUpColumnName(string tableName){
+        string res = tableName.Replace(" ","_").Replace("-","_");
+        char[] ca = res.ToLower().ToCharArray();
+        for (int i = 0; i < ca.Length; i++) {
+            if ((i == 0) || (ca[i - 1] == '_')) {
+                ca[i] = char.ToUpper(ca[i]);
+            }         
+        }
+        res = new string(ca);
+        res = res.Replace("_","");
+        return res;
+    }
+    
+    string CleanUpTableName(string tableName)
+    {
+        string res = tableName.Replace(" ","_").Replace("-","_");
+        char[] ca = res.ToLower().ToCharArray();
+        for (int i = 0; i < ca.Length; i++) {
+            if ((i == 0) || (ca[i - 1] == '_')) {
+                ca[i] = char.ToUpper(ca[i]);
+            }         
+        }
+        res = new string(ca);
+        res = res.Replace("_","");
+        res = res.Replace(" ","");
+        return res;
     }
     string CheckNullable(Column col){
         string result="";
@@ -170,7 +189,7 @@
         }
         public Column PK{
             get{
-                return this.Columns.SingleOrDefault(x=>x.IsPK) ?? this.Columns[0];
+                return this.Columns.FirstOrDefault(x=>x.IsPK) ?? this.Columns[0];
             }
         }
         public Column Descriptor{
@@ -200,7 +219,6 @@
         public int MaxLength;
         public bool IsNullable;
         public bool IsForeignKey;
-        public bool IsComputed;
     }
     public class FKTable{
         public string ThisTable;
