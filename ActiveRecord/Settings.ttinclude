@@ -212,6 +212,7 @@
         public int MaxLength;
         public bool IsNullable;
         public bool IsForeignKey;
+        public bool IsComputed;
     }
     public class FKTable{
         public string ThisTable;
