@@ -33,33 +33,26 @@
     "BuildVersion",
     };
 
-    string CleanUpColumnName(string tableName){
-        string res = tableName.Replace(" ","_").Replace("-","_");
-        char[] ca = res.ToLower().ToCharArray();
-        for (int i = 0; i < ca.Length; i++) {
-            if ((i == 0) || (ca[i - 1] == '_')) {
-                ca[i] = char.ToUpper(ca[i]);
-            }         
-        }
-        res = new string(ca);
-        res = res.Replace("_","");
-        return res;
-    }
+    	string CleanUp(string name) {
+		string res = name.Replace(" ","_").Replace("-","_");
+		char[] ca = res.ToLower().ToCharArray();
+		for (int i = 0; i < ca.Length; i++) {
+			if ((i == 0) || (ca[i - 1] == '_')) {
+				ca[i] = char.ToUpper(ca[i]);
+			}         
+		}
+		res = new string(ca);
+		res = res.Replace("_","");
+		return res;
+	}
+
+	string CleanUpColumnName(string columnName) {
+		return CleanUp(columnName);
+	}
     
-    string CleanUpTableName(string tableName)
-    {
-        string res = tableName.Replace(" ","_").Replace("-","_");
-        char[] ca = res.ToLower().ToCharArray();
-        for (int i = 0; i < ca.Length; i++) {
-            if ((i == 0) || (ca[i - 1] == '_')) {
-                ca[i] = char.ToUpper(ca[i]);
-            }         
-        }
-        res = new string(ca);
-        res = res.Replace("_","");
-        res = res.Replace(" ","");
-        return res;
-    }
+	string CleanUpTableName(string tableName) {
+		return CleanUp(tableName);
+	}
     string CheckNullable(Column col){
         string result="";
         if(col.IsNullable && col.SysType !="byte[]" && col.SysType !="string")
