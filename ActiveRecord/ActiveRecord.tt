@@ -47,8 +47,11 @@ namespace <#=Namespace #>
         }
         public static void Setup(List<<#=tbl.ClassName#>> testlist){
             SetTestRepo();
-            _testRepo._items = testlist;
-        }
+			foreach (var item in testlist)	 	
+			{
+				_testRepo._items.Add(item);
+			}
+		}
         public static void Setup(<#=tbl.ClassName#> item) {
             SetTestRepo();
             _testRepo._items.Add(item);
@@ -380,7 +383,7 @@ namespace <#=Namespace #>
         public DbCommand GetUpdateCommand() {
 <#if(tbl.Columns.Any(x=>x.Name.ToLower()=="modifiedon")){#>
             if (!_dirtyColumns.Any(x => x.Name.ToLower() == "modifiedon")) {
-               this.<#=tbl.Columns.Single(x=>x.Name.ToLower()=="modifiedon").CleanName#>=DateTime.Now;
+               this.<#=tbl.Columns.Single(x=>x.Name.ToLower()=="modifiedon").CleanName#>=<#=DatabaseName#>DB.DateTimeNowTruncatedDownToSecond();
             }            
 <#}#>
             if(TestMode)
@@ -416,7 +419,7 @@ namespace <#=Namespace #>
                 this.ModifiedBy=Environment.UserName;
 <#}#>
 <#if(tbl.Columns.Any(x=>x.Name=="ModifiedOn")){#>
-            this.ModifiedOn=DateTime.Now;
+            this.ModifiedOn=<#=DatabaseName#>DB.DateTimeNowTruncatedDownToSecond();
 <#}#>
             
             if(this._dirtyColumns.Count>0)
@@ -447,14 +450,14 @@ namespace <#=Namespace #>
 
 <#if(tbl.Columns.Any(x=>x.Name=="CreatedOn")){#>
             
-            this.CreatedOn=DateTime.Now;
+            this.CreatedOn=<#=DatabaseName#>DB.DateTimeNowTruncatedDownToSecond();
 <#}#>
 <#if(tbl.Columns.Any(x=>x.Name=="CreatedBy")){#>
             if(String.IsNullOrEmpty(this.CreatedBy))
                 this.CreatedBy=Environment.UserName;
 <#}#>
 <#if(tbl.Columns.Any(x=>x.Name=="ModifiedOn")){#>
-            this.ModifiedOn=DateTime.Now;
+            this.ModifiedOn=<#=DatabaseName#>DB.DateTimeNowTruncatedDownToSecond();
 <#}#>
 <#if(tbl.Columns.Any(x=>x.Name=="ModifiedBy")){#>
             if(String.IsNullOrEmpty(this.ModifiedBy))
